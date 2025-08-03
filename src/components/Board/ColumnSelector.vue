@@ -1,5 +1,5 @@
 <script lang="ts">
-export interface AddMarkerProps { 
+export interface AddMarkerProps {
     player: Player;
     column: number;
 }
@@ -7,7 +7,7 @@ export interface AddMarkerProps {
 
 <script setup lang="ts">
 import { onMounted, onUpdated, ref } from 'vue';
-import type { Player } from './Board.vue';
+import type { Player } from './GameBoard.vue';
 
 interface ColumnSelectorProps {
     column: number
@@ -54,7 +54,7 @@ const addMarker = () => {
             transform: `scaleX(${scale})`
         }"
     >
-        <img 
+        <img
             :src="`src/assets/images/marker-${currentPlayer}.png`"
             :class="!disabled ? 'animate-bounce' : 'opacity-65 transform-[translateY(-25%)]'"
             class="absolute hidden group-hover:block -translate-x-1/2 left-1/2 -top-10 select-none ease-in"

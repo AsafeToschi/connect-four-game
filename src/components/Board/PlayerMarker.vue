@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { onMounted, onUpdated, ref } from 'vue';
-import type { Player } from './Board.vue';
+import { onMounted, ref } from 'vue';
+import type { Player } from './GameBoard.vue';
 
 interface MarkerProps {
     position: MarkerPosition;
@@ -14,11 +14,11 @@ interface MarkerPosition {
 }
 
 const { position, player, scale } = defineProps<MarkerProps>();
-const positionStyle = ref({ top: -70, left: 0 })
+const positionStyle = ref({ top: -80, left: 0 })
 
 // Temporary
 // TODO: Apply gravity effect with javascript
-const delayedRowPosition = ref(6); 
+const delayedRowPosition = ref(6);
 
 const calculatePosition = () => {
     const baseMarkerSize = 70;

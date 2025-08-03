@@ -10,7 +10,7 @@ export interface GameState {
 </script>
 
 <script setup lang="ts">
-import Board, { type Player } from '@/components/Board/Board.vue'
+import Board, { type Player } from '@/components/Board/GameBoard.vue'
 import { ref } from 'vue';
 
 const gameState = ref<GameState>({
@@ -21,13 +21,22 @@ const gameState = ref<GameState>({
         yellow: 0
     }
 })
+
+const onPlayerMove = () => {
+    gameState.value.isPlaying = true;
+    setTimeout(() => {
+        gameState.value.isPlaying = false;
+    }, 600);
+
+    gameState.value.currentPlayer = gameState.value.currentPlayer == 'red' ? 'yellow' : 'red'
+}
 </script>
 
 <template>
     <main class="min-h-screen w-full bg-purple relative">
         <!-- menu -->
         <!-- board -->
-        <Board :state="gameState"/>
+        <Board :state="gameState" @playerMove="onPlayerMove"/>
         <!-- status -->
     </main>
 </template>
