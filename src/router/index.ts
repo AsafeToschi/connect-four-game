@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import HomeView from '../views/GameView.vue'
 import FontTest from '../views/FontTest.vue'
 
 const router = createRouter({
@@ -7,14 +7,14 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'game',
       component: HomeView,
     },
-    // {
-    //   path: '/font-test',
-    //   name: 'font-test',
-    //   component: FontTest,
-    // },
+    {
+      path: '/font-test',
+      name: 'font-test',
+      component: FontTest,
+    },
   ],
 })
 
