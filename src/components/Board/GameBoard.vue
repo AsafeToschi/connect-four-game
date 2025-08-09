@@ -41,27 +41,27 @@ const BOARD_SIZE = {
 }
 
 const board = ref<PlayerMove[][]>(new Array(7).fill(null).map(() => []));
-const boardRef = ref<HTMLInputElement | null>(null);
 
-const updateScale = () => {
-    if (!boardRef.value) {
-        return;
-    }
+// place it in a composable
+// const boardRef = ref<HTMLInputElement | null>(null);
+// const updateScale = () => {
+//     if (!boardRef.value) {
+//         return;
+//     }
 
-    const baseWidth = 632;
-    const currentWidth = boardRef.value.clientWidth;
-    scale.value = currentWidth / baseWidth;
-}
+//     const baseWidth = 632;
+//     const currentWidth = boardRef.value.clientWidth;
+//     scale.value = currentWidth / baseWidth;
+// }
+// onMounted(() => {
+//     window.addEventListener("resize", updateScale);
+// })
 
-onMounted(() => {
-    window.addEventListener("resize", updateScale);
-})
+// onUnmounted(() => {
+//     window.removeEventListener("resize", updateScale);
+// })
+// const scale = ref(1);
 
-onUnmounted(() => {
-    window.removeEventListener("resize", updateScale);
-})
-
-const scale = ref(1);
 
 const getPlayerSurroundingMoves = (currentPlayerMove: PlayerMove) => {
     const currentMovePosition = currentPlayerMove.position
@@ -95,36 +95,54 @@ const updateConnectionOrigin = (connection: Connection, currentPlayerMove: Playe
     const { origin, length, direction } = connection;
 
     // update origin
-    const newCol = origin.col + (length - 1) * direction.colStep;
-    const newRow = origin.row + (length - 1) * direction.rowStep;
     connection.origin = {
-        col: newCol,
-        row: newRow
+        col: origin.col + (length - 1) * direction.colStep,
+        row: origin.row + (length - 1) * direction.rowStep
     }
     
     // invert direction
     connection.direction.colStep *= -1;
     connection.direction.rowStep *= -1;
     
-    let player: Player = currentPlayerMove.player;
-    let col = connection.origin.col
-    let row = connection.origin.row
-    
-    // reset length and check for new connection
-    connection.length = 0;
-    while (player === currentPlayerMove.player) {
-        const boardPositionPlayer = board.value[col]?.[row]?.player;
-        if (boardPositionPlayer === currentPlayerMove.player) {
-            connection.length++;
-            col += connection.direction.colStep
-            row += connection.direction.rowStep
-        } else {
-            player = boardPositionPlayer;
+    // reset length and check for new connections
+    updateLineConnection(connection, currentPlayerMove.player);
+}
+
+const updateLineConnection = (currentConnection: Connection, currentPlayer: Player) => {
+    let col = currentConnection.origin.col + currentConnection.length * currentConnection.direction.colStep;
+    let row = currentConnection.origin.row + currentConnection.length * currentConnection.direction.rowStep;
+    let player = board.value[col]?.[row]?.player;
+
+    while (player === currentPlayer) {
+        const playerMove = board.value[col]?.[row];
+
+        const connectionIndex = playerMove?.connections?.findIndex((connection) => {
+            return isSameLine(currentConnection, connection) && currentConnection.origin !== connection.origin
+        })
+
+        if (connectionIndex >= 0) {
+            playerMove.connections[connectionIndex] = currentConnection
         }
+
+        if (playerMove?.connections?.length == 0) {
+            playerMove.connections.push(currentConnection);
+        }
+
+        currentConnection.length++;
+        col += currentConnection.direction.colStep;
+        row += currentConnection.direction.rowStep;
+        player = board.value[col]?.[row]?.player
     }
 }
 
-const createNewConnection = (startPosition: MarkerPosition, finalPosition: MarkerPosition) => {
+const isSameLine = (connectionOne: Connection, connectionTwo: Connection) => {
+    const isSameColDirection = connectionOne.direction.colStep == connectionTwo.direction.colStep || connectionOne.direction.colStep - connectionTwo.direction.colStep == 0
+    const isSameRowDirection = connectionOne.direction.rowStep == connectionTwo.direction.rowStep || connectionOne.direction.rowStep - connectionTwo.direction.rowStep == 0
+
+    return isSameColDirection && isSameRowDirection
+}
+
+const createNewConnection = (startPosition: MarkerPosition, finalPosition: MarkerPosition, player: Player) => {
     const connection = {
         length: 2,
         direction: {
@@ -136,47 +154,51 @@ const createNewConnection = (startPosition: MarkerPosition, finalPosition: Marke
             row: startPosition.row
         }
     }
+
     board.value[startPosition.col][startPosition.row].connections.push(connection);
+    board.value[finalPosition.col][finalPosition.row].connections.push(connection);
     
-    return connection
+    updateLineConnection(connection, player);
 }
 
-const getConnections = (currentPlayerMove: PlayerMove) => {
+const setConnections = (currentPlayerMove: PlayerMove) => {
     const playerSurroundingMoves = getPlayerSurroundingMoves(currentPlayerMove);
-    debugger;
 
-    const connections = playerSurroundingMoves.map((surroundingMove) => {
+    for (const surroundingMove of playerSurroundingMoves) {
         const connection = surroundingMove.connections.find(({ origin, direction }) => {
             const isSameCol = origin.col == currentPlayerMove.position.col && direction.colStep == 0;
             const isSameRow = origin.row == currentPlayerMove.position.row && direction.rowStep == 0;
 
             const colDistance = origin.col - currentPlayerMove.position.col * direction.colStep
             const rowDistance = origin.row - currentPlayerMove.position.row * direction.rowStep
-            const isSameDiagonal = colDistance === rowDistance
+            const isSameDiagonal = colDistance === rowDistance && direction.colStep !== 0 && direction.rowStep !== 0;
             
             return isSameRow || isSameCol || isSameDiagonal
         })
 
-        // debugger;
         if (!connection) {
-            return createNewConnection(surroundingMove.position, currentPlayerMove.position);
+            createNewConnection(surroundingMove.position, currentPlayerMove.position, currentPlayerMove.player)
+            continue;
         }
 
-        // verify if the current player move is before the origin or after
+        const isDuplicateConnection = currentPlayerMove.connections.find((currentMoveConnection) => {
+            return isSameLine(currentMoveConnection, connection)
+        })
+
+        if (isDuplicateConnection) {
+            continue;
+        }
+
+        // verifies if the current player move is before the origin or after
         const isSameColDirection = (connection.origin.col + (connection.length * connection.direction.colStep)) === currentPlayerMove.position.col;
         const isSameRowDirection = (connection.origin.row + (connection.length * connection.direction.rowStep)) === currentPlayerMove.position.row;
         
         if (!isSameColDirection || !isSameRowDirection) {
             updateConnectionOrigin(connection, currentPlayerMove);
         } else {
-            connection.length += 1;
+            updateLineConnection(connection, currentPlayerMove.player)
         }
-
-        return connection;
-    
-    })
-
-    return connections;
+    }
 }
 
 const handleAddMarker = ({ player, column }: AddMarkerProps) => {
@@ -185,7 +207,6 @@ const handleAddMarker = ({ player, column }: AddMarkerProps) => {
         return;
     }
 
-    // represents the player move row
     const row = board.value[column].length;
     const currentPlayerMove: PlayerMove = {
         player,
@@ -193,9 +214,8 @@ const handleAddMarker = ({ player, column }: AddMarkerProps) => {
         connections: []
     };
     
-    // Find a way to update all connections 
     board.value[column].push(currentPlayerMove); 
-    currentPlayerMove.connections = getConnections(currentPlayerMove);
+    setConnections(currentPlayerMove);
     
     emit('playerMove', currentPlayerMove);
 }
@@ -204,21 +224,21 @@ const handleAddMarker = ({ player, column }: AddMarkerProps) => {
 <template>
     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-w-full w-max">
         <div>
-            <img src="@/assets/images/board-layer-white-large.svg" alt="board" class="absolute max-w-[632px] w-full select-none z-1" ref="boardRef" @load="updateScale" />
+            <img src="@/assets/images/board-layer-white-large.svg" alt="board" class="absolute max-w-[632px] w-full select-none z-1" ref="boardRef" />
             <img src="@/assets/images/board-layer-black-large.svg" alt="board shadow" class="max-w-[632px] w-full select-none -z-1" />
         </div>
 
         <div class="absolute w-full h-full top-0 left-0 overflow-hidden rounded-[40px]">
             <template v-for="(column, colIndex) in board" :key="colIndex">
                 <template v-for="(playerMove, rowIndex) in column" :key="`${colIndex}-${rowIndex}`">
-                    <Marker :playerMove="playerMove" :scale="scale" />
+                    <Marker :playerMove="playerMove" :scale="1" />
                 </template>
             </template>
         </div>
 
         <div>
             <template v-for="(column, colIndex) in board" :key="colIndex">
-                <ColumnSelector :column="colIndex" :scale="scale" @addMarker="handleAddMarker"
+                <ColumnSelector :column="colIndex" :scale="1" @addMarker="handleAddMarker"
                     :currentPlayer="state.currentPlayer" :disabled="state.isPlaying || column.length >= BOARD_SIZE.cols || !!state.winner" />
             </template>
         </div>

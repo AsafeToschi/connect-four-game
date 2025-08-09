@@ -18,7 +18,7 @@ interface MarkerProps {
 
 const { playerMove, scale } = defineProps<MarkerProps>();
 const positionStyle = ref({ top: -80, left: 0 })
-const debug = true;
+const debug = false;
 
 // Temporary
 // TODO: Apply gravity effect with javascript

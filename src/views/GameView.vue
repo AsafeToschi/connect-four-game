@@ -17,11 +17,9 @@ import { ref } from 'vue';
 
 // Hard
 // Simulate the next 3 or 4 moves and get a score for each move, based on that score choose the best one
-// evaluate our connected markers, oponent connect markers and winnig move (which will score 100)
+// evaluate my connected markers, oponent connect markers and winnig move (which will score 100)
 // a move that results in 2 possible moves with 3 connected lines is also a 100 score as the winning chance is 100%
 // never start in the sides
-
-// on each move check the 8 blocks around
 
 const gameState = ref<GameState>({
     currentPlayer: 'red',
