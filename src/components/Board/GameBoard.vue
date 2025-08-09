@@ -42,7 +42,7 @@ const BOARD_SIZE = {
 
 const board = ref<PlayerMove[][]>(new Array(7).fill(null).map(() => []));
 
-// place it in a composable
+// maybe place it in a composable
 // const boardRef = ref<HTMLInputElement | null>(null);
 // const updateScale = () => {
 //     if (!boardRef.value) {
@@ -163,14 +163,13 @@ const createNewConnection = (startPosition: MarkerPosition, finalPosition: Marke
 
 const setConnections = (currentPlayerMove: PlayerMove) => {
     const playerSurroundingMoves = getPlayerSurroundingMoves(currentPlayerMove);
-
     for (const surroundingMove of playerSurroundingMoves) {
         const connection = surroundingMove.connections.find(({ origin, direction }) => {
             const isSameCol = origin.col == currentPlayerMove.position.col && direction.colStep == 0;
             const isSameRow = origin.row == currentPlayerMove.position.row && direction.rowStep == 0;
 
-            const colDistance = origin.col - currentPlayerMove.position.col * direction.colStep
-            const rowDistance = origin.row - currentPlayerMove.position.row * direction.rowStep
+            const colDistance = (origin.col - currentPlayerMove.position.col) * direction.colStep
+            const rowDistance = (origin.row - currentPlayerMove.position.row) * direction.rowStep
             const isSameDiagonal = colDistance === rowDistance && direction.colStep !== 0 && direction.rowStep !== 0;
             
             return isSameRow || isSameCol || isSameDiagonal
@@ -196,6 +195,7 @@ const setConnections = (currentPlayerMove: PlayerMove) => {
         if (!isSameColDirection || !isSameRowDirection) {
             updateConnectionOrigin(connection, currentPlayerMove);
         } else {
+            currentPlayerMove.connections.push(connection);
             updateLineConnection(connection, currentPlayerMove.player)
         }
     }

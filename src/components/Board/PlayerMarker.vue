@@ -18,7 +18,6 @@ interface MarkerProps {
 
 const { playerMove, scale } = defineProps<MarkerProps>();
 const positionStyle = ref({ top: -80, left: 0 })
-const debug = false;
 
 // Temporary
 // TODO: Apply gravity effect with javascript
@@ -39,18 +38,6 @@ onMounted(() => {
     }, 100)
 });
 
-const directionMap = {
-    "00": '•',
-    "01": "↑",
-    "11": "↗",
-    "10": "→",
-    "1-1": "↘",
-    "0-1": "↓",
-    "-1-1": "↙",
-    "-10": "←",
-    "-11": "↖",
-}
-
 </script>
 <template>
     <div class="absolute select-none z-0 ease-in-out duration-500 transition-[top] origin-top-left"
@@ -58,30 +45,11 @@ const directionMap = {
             top: `${positionStyle.top}px`,
             left: `${positionStyle.left}px`,
             transform: `scale(${scale})`,
-            zIndex: debug == true ? '10' : '0'
         }"
     >
         <img :src="`src/assets/images/counter-${playerMove.player}-large.svg`" :alt="`${playerMove.player} marker - Column ${playerMove.position.col + 1}. Row ${playerMove.position.row + 1}`"
             class=""
             
         />
-        <div v-if="debug === true" class="absolute top-1/2 left-1/2 -translate-1/2 z-30 whitespace-nowrap">
-            <div class="flex flex-col font-bold bg-white/50 p-1 border border-black">
-                <div v-for="(connection, i) in playerMove.connections" :key="i">
-                    <span>
-                        C{{ connection.origin.col }} x R{{ connection.origin.row }} | {{ directionMap[`${connection.direction.colStep}${connection.direction.rowStep}`] }}
-                    </span>
-                    <div class="flex justify-center">
-                        <template v-for="n in connection.length" :key="n">
-                            ■
-                        </template>
-                    </div>
-                </div>
-
-
-            </div>
-            <!-- {{ playerMove.position.col }} x {{ playerMove.position.row }} -->
-        </div>
-
     </div>
 </template>
