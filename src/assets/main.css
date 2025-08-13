@@ -13,11 +13,31 @@
 
     --color-*: initial;
     --color-black: #000000;
-    --color-dark-purple: #5C2DD5;
-    --color-purple: #7945FF;
-    --color-red: #FD6687;
-    --color-yellow: #FFCE67;
-    --color-white: #FFFFFF;
+    --color-dark-purple: #5c2dd5;
+    --color-purple: #7945ff;
+    --color-red: #fd6687;
+    --color-yellow: #ffce67;
+    --color-white: #ffffff;
+
+    --text-heading-lg: 56px;
+    --text-heading-lg--line-height: 71px;
+    --text-heading-lg--font-weight: 700;
+
+    --text-heading-md: 24px;
+    --text-heading-md--line-height: 31px;
+    --text-heading-md--font-weight: 700;
+
+    --text-heading-sm: 20px;
+    --text-heading-sm--line-height: 26px;
+    --text-heading-sm--font-weight: 700;
+
+    --text-heading-xs: 16px;
+    --text-heading-xs--line-height: 21px;
+    --text-heading-xs--font-weight: 700;
+
+    --text-body-md: 16px;
+    --text-body-md--line-height: 21px;
+    --text-body-md--font-weight: 500;
 }
 
 @layer components {

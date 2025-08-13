@@ -6,58 +6,34 @@ export interface AddMarkerProps {
 </script>
 
 <script setup lang="ts">
-import { onMounted, onUpdated, ref } from 'vue';
-import type { Player } from './GameBoard.vue';
+import type { Player } from "@/data/gameState";
 
 interface ColumnSelectorProps {
-    column: number
-    scale: number
+    column: number;
     currentPlayer: Player;
-    disabled: boolean
+    disabled: boolean;
 }
 
-const { column, scale, currentPlayer, disabled } = defineProps<ColumnSelectorProps>();
+const { column, currentPlayer, disabled } = defineProps<ColumnSelectorProps>();
 const emit = defineEmits<{
-    addMarker: [AddMarkerProps]
-}>()
-
-const positionStyle = ref({ left: 0 })
-
-const calculatePosition = () => {
-    const baseMarkerSize = 88;
-    const boardMargin = 8;
-    positionStyle.value.left = (boardMargin + baseMarkerSize * column) * scale
-}
-
-onMounted(() => {
-    calculatePosition();
-});
-
-onUpdated(() => {
-    calculatePosition();
-})
+    addMarker: [AddMarkerProps];
+}>();
 
 const addMarker = () => {
     if (disabled) {
         return;
     }
 
-    emit('addMarker', { player: currentPlayer, column })
-}
+    emit("addMarker", { player: currentPlayer, column });
+};
 </script>
 
 <template>
-    <div class="absolute top-0 h-full w-[88px] z-10 cursor-pointer group"
-        @click="addMarker"
-        :style="{
-            left: `${positionStyle.left}px`,
-            transform: `scaleX(${scale})`
-        }"
-    >
+    <div class="group relative z-10 w-full cursor-pointer" @click="addMarker">
         <img
             :src="`src/assets/images/marker-${currentPlayer}.png`"
-            :class="!disabled ? 'animate-bounce' : 'opacity-65 transform-[translateY(-25%)]'"
-            class="absolute hidden group-hover:block -translate-x-1/2 left-1/2 -top-10 select-none ease-in"
+            :class="!disabled ? 'animate-bounce' : 'transform-[translateY(-25%)] opacity-65'"
+            class="absolute -top-10 left-1/2 hidden -translate-x-1/2 select-none ease-in group-hover:block"
         />
     </div>
 </template>
