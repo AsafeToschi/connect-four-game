@@ -6,34 +6,30 @@ export interface AddMarkerProps {
 </script>
 
 <script setup lang="ts">
-import type { Player } from "@/data/gameState";
+import { useGameStore, type Player } from "@/composables/gameStore";
 
 interface ColumnSelectorProps {
     column: number;
-    currentPlayer: Player;
     disabled: boolean;
 }
 
-const { column, currentPlayer, disabled } = defineProps<ColumnSelectorProps>();
-const emit = defineEmits<{
-    addMarker: [AddMarkerProps];
-}>();
+const { column, disabled } = defineProps<ColumnSelectorProps>();
+const { state, placeMove } = useGameStore();
 
-const addMarker = () => {
+const handlePlayerMove = () => {
     if (disabled) {
         return;
     }
-
-    emit("addMarker", { player: currentPlayer, column });
+    placeMove(column);
 };
 </script>
 
 <template>
-    <div class="group relative z-10 w-full cursor-pointer" @click="addMarker">
+    <div class="group relative z-10 w-full cursor-pointer" @click="handlePlayerMove">
         <img
-            :src="`src/assets/images/marker-${currentPlayer}.png`"
+            :src="`src/assets/images/marker-${state.turn.player}.png`"
             :class="!disabled ? 'animate-bounce' : 'transform-[translateY(-25%)] opacity-65'"
-            class="absolute -top-10 left-1/2 hidden -translate-x-1/2 select-none ease-in group-hover:block"
+            class="absolute -top-10 left-1/2 hidden -translate-x-1/2 ease-in select-none group-hover:block"
         />
     </div>
 </template>

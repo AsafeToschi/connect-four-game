@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { PlayerMove } from "@/data/gameState";
-import { computed, onMounted, ref } from "vue";
+import type { PlayerMove } from "@/composables/gameStore";
+import { computed, onMounted, ref, type DeepReadonly } from "vue";
 
 interface MarkerProps {
-    playerMove: PlayerMove;
+    playerMove: DeepReadonly<PlayerMove>;
     scale: number;
     debug: boolean;
 }
@@ -50,17 +50,17 @@ const isWinningMove = computed(() => {
 
 <template>
     <div
-        class="absolute origin-top-left select-none transition-[top] duration-500 ease-in-out"
+        class="absolute origin-top-left transition-[top] duration-500 ease-in-out select-none"
         :style="{
             top: `${positionStyle.top}px`,
             left: `${positionStyle.left}px`,
             transform: `scale(${scale})`,
             zIndex: debug == true ? '10' : '',
         }"
-        :class="`${isWinningMove ? 'before:h-8.5 before:w-8.5 before:-translate-1/2 before:absolute before:left-1/2 before:top-1/2 before:box-border before:rounded-full before:border-[6px] before:border-white' : ''}`"
+        :class="`${isWinningMove ? 'before:absolute before:top-1/2 before:left-1/2 before:box-border before:h-8.5 before:w-8.5 before:-translate-1/2 before:rounded-full before:border-[6px] before:border-white' : ''}`"
     >
         <img :src="`src/assets/images/counter-${playerMove.player}-large.svg`" :alt="`${playerMove.player} marker - Column ${playerMove.position.col + 1}. Row ${playerMove.position.row + 1}`" />
-        <div v-if="debug === true" class="-translate-1/2 absolute left-1/2 top-1/2 z-30 whitespace-nowrap">
+        <div v-if="debug === true" class="absolute top-1/2 left-1/2 z-30 -translate-1/2 whitespace-nowrap">
             <div class="flex flex-col border border-black bg-white/50 p-1 font-bold">
                 <div v-for="(connection, i) in playerMove.connections" :key="i">
                     <span> C{{ connection.origin.col }} x R{{ connection.origin.row }} | {{ directionMap[`${connection.direction.colStep}${connection.direction.rowStep}`] }} </span>
