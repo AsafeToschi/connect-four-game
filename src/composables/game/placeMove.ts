@@ -1,68 +1,5 @@
-import { readonly, ref } from "vue";
-
-export interface GameState {
-    turn: {
-        player: Player;
-        skipped?: boolean;
-        timeLimit: number;
-        currentTime?: number; // TODO: add current time
-    };
-    starterPlayer: Player;
-    isPlaying: boolean;
-    score: {
-        [key in Player]: number;
-    };
-    board: PlayerMove[][];
-    winner: PlayerMove | null;
-    status: "idle" | "in game" | "ended";
-    // movesHistory: PlayerMove[]
-}
-
-export type Player = "red" | "yellow";
-export interface Connection {
-    length: number;
-    direction: {
-        colStep: number; // number between -1 and 1
-        rowStep: number; // number between -1 and 1
-    };
-    origin: MarkerPosition;
-}
-
-export interface PlayerMove {
-    player: Player;
-    position: MarkerPosition;
-    connections: Connection[];
-}
-
-export interface MarkerPosition {
-    col: number;
-    row: number;
-}
-
-const getInitialBoardState = (): GameState["board"] => new Array(7).fill(null).map(() => []);
-const getInitialGameState = (): GameState => ({
-    turn: {
-        player: "red",
-        timeLimit: 90,
-    },
-    starterPlayer: "red",
-    isPlaying: false,
-    score: {
-        red: 0,
-        yellow: 0,
-    },
-    board: getInitialBoardState(),
-    winner: null,
-    status: "in game", // temporary
-    // movesHistory: [] // easy mode feature to implement later
-});
-
-export const BOARD_SIZE = {
-    rows: 6,
-    cols: 7,
-};
-
-const gameState = ref<GameState>(getInitialGameState());
+import { BOARD_SIZE, changeTurn, endGame, useGameStore, type Connection, type MarkerPosition, type Player, type PlayerMove } from "./gameStore";
+import { gameStore } from "./gameStore";
 
 const getPlayerSurroundingMoves = (currentPlayerMove: PlayerMove) => {
     const currentMovePosition = currentPlayerMove.position;
@@ -70,7 +7,7 @@ const getPlayerSurroundingMoves = (currentPlayerMove: PlayerMove) => {
     let colOffset = currentMovePosition.col == 0 ? 0 : -1;
     let rowOffset = currentMovePosition.row == 0 ? 0 : -1;
     while (colOffset <= 1 && rowOffset <= 1) {
-        const playerMove = gameState.value.board[currentMovePosition.col + colOffset]?.[currentMovePosition.row + rowOffset];
+        const playerMove = gameStore.value.board[currentMovePosition.col + colOffset]?.[currentMovePosition.row + rowOffset];
         if (!playerMove || (colOffset === 0 && rowOffset === 0)) {
             // player move not found
             colOffset += 1;
@@ -112,10 +49,10 @@ const updateConnectionOrigin = (connection: Connection, currentPlayerMove: Playe
 const updateLineConnection = (currentConnection: Connection, currentPlayer: Player) => {
     let col = currentConnection.origin.col + currentConnection.length * currentConnection.direction.colStep;
     let row = currentConnection.origin.row + currentConnection.length * currentConnection.direction.rowStep;
-    let player = gameState.value.board[col]?.[row]?.player;
+    let player = gameStore.value.board[col]?.[row]?.player;
 
     while (player === currentPlayer) {
-        const playerMove = gameState.value.board[col]?.[row];
+        const playerMove = gameStore.value.board[col]?.[row];
 
         const connectionIndex = playerMove?.connections?.findIndex((connection) => {
             return isSameLine(currentConnection, connection) && currentConnection.origin !== connection.origin;
@@ -132,7 +69,7 @@ const updateLineConnection = (currentConnection: Connection, currentPlayer: Play
         currentConnection.length++;
         col += currentConnection.direction.colStep;
         row += currentConnection.direction.rowStep;
-        player = gameState.value.board[col]?.[row]?.player;
+        player = gameStore.value.board[col]?.[row]?.player;
     }
 };
 
@@ -156,8 +93,8 @@ const createConnection = (startPosition: MarkerPosition, finalPosition: MarkerPo
         },
     };
 
-    gameState.value.board[startPosition.col][startPosition.row].connections.push(connection);
-    gameState.value.board[finalPosition.col][finalPosition.row].connections.push(connection);
+    gameStore.value.board[startPosition.col][startPosition.row].connections.push(connection);
+    gameStore.value.board[finalPosition.col][finalPosition.row].connections.push(connection);
 
     updateLineConnection(connection, player);
 };
@@ -203,7 +140,7 @@ const setConnections = (currentPlayerMove: PlayerMove) => {
 };
 
 const createPlayerMove = (player: Player, column: number) => {
-    const row = gameState.value.board[column].length;
+    const row = gameStore.value.board[column].length;
     const currentPlayerMove: PlayerMove = {
         player,
         position: { col: column, row },
@@ -214,15 +151,15 @@ const createPlayerMove = (player: Player, column: number) => {
 };
 
 // handle player move
-const placeMove = (column: number) => {
-    if (gameState.value.board[column].length >= BOARD_SIZE.rows) {
+export const placeMove = (column: number) => {
+    if (gameStore.value.board[column].length >= BOARD_SIZE.rows) {
         console.log("this move is not possible");
         return;
     }
-    const player = gameState.value.turn.player;
+    const player = gameStore.value.turn.player;
     const playerMove = createPlayerMove(player, column);
 
-    gameState.value.board[column].push(playerMove);
+    gameStore.value.board[column].push(playerMove);
     setConnections(playerMove);
 
     if (playerMove.connections.find((connection) => connection.length >= 4)) {
@@ -231,59 +168,4 @@ const placeMove = (column: number) => {
     }
 
     changeTurn();
-};
-
-// handle game turn change
-const changeTurn = (params?: Partial<GameState["turn"]>) => {
-    const { player, skipped } = params || {};
-    gameState.value.turn.player = player || gameState.value.turn.player == "red" ? "yellow" : "red";
-    gameState.value.turn.skipped = skipped ?? false;
-
-    // merge turn settings
-};
-
-// handle new game
-const startNewGame = () => {
-    // reset score and game
-    gameState.value = getInitialGameState();
-};
-
-const restartGame = () => {
-    // TODO: update code to save how started the game to start the next game with the other player if it ends in a draw
-    gameState.value = Object.assign(gameState.value, {
-        winner: null,
-        status: "in game",
-        board: getInitialBoardState(),
-    });
-    changeTurn();
-};
-
-// handle new game
-const endGame = (playerMove: PlayerMove) => {
-    // sets winner, update score and status
-    gameState.value = Object.assign(gameState.value, {
-        winner: playerMove,
-        status: "ended",
-    });
-
-    gameState.value.score[playerMove.player]++;
-
-    // stop timmer
-};
-
-// not sure if I should use "useGameState" or just "useGame" instead
-export const useGameStore = () => {
-    const readOnlyGameState = readonly(gameState);
-
-    return {
-        state: readOnlyGameState,
-        // gameState, // exposes gameState until we finish migrating all methods
-
-        // exposes methods
-        changeTurn,
-        restartGame,
-        endGame,
-        startNewGame,
-        placeMove,
-    };
 };

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useGameStore } from "@/composables/gameStore";
+import { useGameStore } from "@/composables/game/gameStore";
 import { onMounted, onUnmounted, ref, watch } from "vue";
 
-const { state, restartGame, changeTurn } = useGameStore();
+const { store, restartGame, changeTurn } = useGameStore();
 
 const intervalId = ref<number | null>(null);
 const startTime = ref<number | null>(null);
@@ -15,7 +15,7 @@ const tick = () => {
     }
 
     const now = new Date().getTime();
-    const timeLimit = state.value.turn.timeLimit * 1000;
+    const timeLimit = store.value.turn.timeLimit * 1000;
     const currentTime = timeLimit - (now - startTime.value);
 
     if (currentTime <= 0) {
@@ -37,7 +37,7 @@ const tick = () => {
 };
 
 const startTimer = (interval?: number) => {
-    console.log("start timer");
+    // console.log("start timer");
     const now = new Date().getTime();
     startTime.value = now;
 
@@ -54,7 +54,7 @@ const endTimer = () => {
 };
 
 watch(
-    () => state.value.status,
+    () => store.value.status,
     (gameStatus) => {
         if (gameStatus === "in game") {
             startTimer();
@@ -65,12 +65,12 @@ watch(
 );
 
 watch(
-    () => state.value.turn.player,
+    () => store.value.turn.player,
     () => startTimer()
 );
 
 onMounted(() => {
-    if (state.value.status == "in game") {
+    if (store.value.status == "in game") {
         startTimer();
     }
 });
@@ -81,34 +81,39 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div class="relative -top-10 bottom-0 -mb-10 min-h-50 w-full">
+    <div class="relative -top-2.5 bottom-0 -mb-2.5 min-h-50 w-full sm:-top-10 sm:-mb-10">
         <div
             class="absolute top-0 left-0 z-0 h-full w-full rounded-t-[60px] bg-dark-purple"
             :class="{
-                'bg-red': state.winner?.player === 'red',
-                'bg-yellow': state.winner?.player === 'yellow',
+                'bg-red': store.winner?.player === 'red',
+                'bg-yellow': store.winner?.player === 'yellow',
             }"
         />
         <div class="relative z-100 flex justify-center">
             <!-- Game Status  -->
-            <div v-if="state.status === 'ended'" class="relative flex w-71.5 flex-col flex-wrap items-center justify-center rounded-[20px] border-[3px] bg-white p-4 hard-shadow-2.5">
-                <p class="text-heading-xs uppercase">Player {{ state.turn.player == "red" ? "1" : "2" }}</p>
+            <div
+                v-if="store.status === 'ended'"
+                class="relative flex w-71.5 flex-col flex-wrap items-center justify-center rounded-[20px] border-[3px] bg-white p-4 hard-shadow-2.5"
+            >
+                <p class="text-heading-xs uppercase">Player {{ store.turn.player == "red" ? "1" : "2" }}</p>
                 <span class="block text-heading-xl uppercase">Wins</span>
-                <button class="white cursor-pointer rounded-full bg-purple px-5.5 py-2.5 text-heading-xs whitespace-nowrap text-white uppercase" @click="restartGame()">Play Again</button>
+                <button class="white cursor-pointer rounded-full bg-purple px-5.5 py-2.5 text-heading-xs whitespace-nowrap text-white uppercase" @click="restartGame()">
+                    Play Again
+                </button>
             </div>
 
             <!-- Player turn holder -->
 
-            <div v-else class="relative">
-                <img :src="`src/assets/images/turn-background-${state.turn.player}.svg`" class=" " />
+            <div v-else class="relative" :class="store.turn.player === 'red' && 'text-white'">
+                <img :src="`src/assets/images/turn-background-${store.turn.player}.svg`" class=" " />
 
                 <div class="absolute top-10 left-0 flex h-[calc(100%-2.5rem)] w-full flex-col items-center justify-center px-4 pt-0 pb-7.5 text-center">
-                    <template v-if="state.turn.skipped">
+                    <template v-if="store.turn.skipped">
                         <p class="text-heading-xs uppercase">Turn</p>
                         <p class="text-heading-lg uppercase">Skipped</p>
                     </template>
                     <template v-else>
-                        <p class="text-heading-xs uppercase">Player {{ state.turn.player == "red" ? "1" : "2" }}'s Turn</p>
+                        <p class="text-heading-xs uppercase">Player {{ store.turn.player == "red" ? "1" : "2" }}'s Turn</p>
                         <p class="text-heading-xl">{{ timer }}s</p>
                     </template>
                 </div>

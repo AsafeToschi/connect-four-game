@@ -44,12 +44,23 @@
     --text-body-md--font-weight: 500;
 }
 
+/* Example of custom property */
+@property --hard-shadow-color {
+    syntax: "<color>";
+    inherits: false;
+    initial-value: #000000;
+}
+
 @utility hard-shadow-* {
-    box-shadow: 0 --spacing(--value(number)) 0 0 #000000;
+    --hard-shadow-size: --spacing(--value(number));
+    --hard-shadow-color: --value(--color-*);
+    box-shadow: 0 var(--hard-shadow-size, 10px) 0 0 var(--hard-shadow-color);
 }
 
 @utility -hard-shadow-* {
-    box-shadow: 0 calc(--spacing(--value(number)) * -1px) 0 0 #000000;
+    --hard-shadow-size: --spacing(--value(number) * -1);
+    --hard-shadow-color: --value(--color-*);
+    box-shadow: 0 var(--hard-shadow-size, -10px) 0 0 var(--hard-shadow-color);
 }
 
 @layer components {

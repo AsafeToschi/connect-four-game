@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/GameView.vue";
+import GameView from "../views/GameView.vue";
+import HomeView from "../views/HomeView.vue";
 import FontTest from "../views/FontTest.vue";
 
 const router = createRouter({
@@ -7,8 +8,13 @@ const router = createRouter({
     routes: [
         {
             path: "/",
-            name: "game",
+            name: "home",
             component: HomeView,
+        },
+        {
+            path: "/game",
+            name: "game",
+            component: GameView,
         },
         {
             path: "/font-test",

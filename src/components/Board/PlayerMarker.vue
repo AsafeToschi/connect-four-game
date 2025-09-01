@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { PlayerMove } from "@/composables/gameStore";
-import { computed, onMounted, ref, type DeepReadonly } from "vue";
+import type { PlayerMove } from "@/composables/game/gameStore";
+import { computed, onMounted, ref, watch, type DeepReadonly } from "vue";
 
 interface MarkerProps {
     playerMove: DeepReadonly<PlayerMove>;
@@ -8,24 +8,21 @@ interface MarkerProps {
     debug: boolean;
 }
 
-const { playerMove, scale, debug } = defineProps<MarkerProps>();
+const props = defineProps<MarkerProps>();
 const positionStyle = ref({ top: -80, left: 0 });
 
-// Temporary
 // TODO: Apply gravity effect with javascript
-const delayedRowPosition = ref(6);
 
 const calculatePosition = () => {
     const baseMarkerSize = 70;
     const boardMargin = 17;
     const markerGap = 18;
-    positionStyle.value.top = (boardMargin + (baseMarkerSize + markerGap) * (5 - delayedRowPosition.value)) * scale;
-    positionStyle.value.left = (boardMargin + (baseMarkerSize + markerGap) * playerMove.position.col) * scale;
+    positionStyle.value.top = (boardMargin + (baseMarkerSize + markerGap) * (5 - props.playerMove.position.row)) * props.scale;
+    positionStyle.value.left = (boardMargin + (baseMarkerSize + markerGap) * props.playerMove.position.col) * props.scale;
 };
 
 onMounted(() => {
     setTimeout(() => {
-        delayedRowPosition.value = playerMove.position.row;
         calculatePosition();
     }, 100);
 });
@@ -44,7 +41,7 @@ const directionMap: { [key: string]: string } = {
 };
 
 const isWinningMove = computed(() => {
-    return !!playerMove.connections.find((connection) => connection.length >= 4);
+    return !!props.playerMove.connections.find((connection) => connection.length >= 4);
 });
 </script>
 
@@ -57,13 +54,23 @@ const isWinningMove = computed(() => {
             transform: `scale(${scale})`,
             zIndex: debug == true ? '10' : '',
         }"
-        :class="`${isWinningMove ? 'before:absolute before:top-1/2 before:left-1/2 before:box-border before:h-8.5 before:w-8.5 before:-translate-1/2 before:rounded-full before:border-[6px] before:border-white' : ''}`"
+        :class="`${
+            isWinningMove
+                ? `before:absolute before:top-1/2 before:left-1/2 before:box-border before:h-8.5 before:w-8.5 before:-translate-1/2 before:rounded-full before:border-[6px] before:border-white`
+                : ''
+        }`"
     >
-        <img :src="`src/assets/images/counter-${playerMove.player}-large.svg`" :alt="`${playerMove.player} marker - Column ${playerMove.position.col + 1}. Row ${playerMove.position.row + 1}`" />
+        <img
+            :src="`src/assets/images/counter-${playerMove.player}-large.svg`"
+            :alt="`${playerMove.player} marker - Column ${playerMove.position.col + 1}. Row ${playerMove.position.row + 1}`"
+        />
+
         <div v-if="debug === true" class="absolute top-1/2 left-1/2 z-30 -translate-1/2 whitespace-nowrap">
             <div class="flex flex-col border border-black bg-white/50 p-1 font-bold">
                 <div v-for="(connection, i) in playerMove.connections" :key="i">
-                    <span> C{{ connection.origin.col }} x R{{ connection.origin.row }} | {{ directionMap[`${connection.direction.colStep}${connection.direction.rowStep}`] }} </span>
+                    <span>
+                        C{{ connection.origin.col }} x R{{ connection.origin.row }} | {{ directionMap[`${connection.direction.colStep}${connection.direction.rowStep}`] }}
+                    </span>
                     <div class="flex justify-center">
                         <template v-for="n in connection.length" :key="n"> ■ </template>
                     </div>
