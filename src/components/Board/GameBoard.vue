@@ -10,52 +10,76 @@ const { store, placeMove } = useGameStore();
 
 const boardRef = ref<HTMLInputElement | null>(null);
 const { scale } = useScale(boardRef, 632);
-// console.log("scale", scale);
+// TODO: update scale measurement and/or marker placement logic
 
-const activeColunmSelector = ref<number>(0);
-const handleKeyUpColumnSelector = (e: KeyboardEvent) => {
-    if (e.key == "ArrowRight") {
+const activeColunmSelector = ref<number | null>(null);
+const handleColumnSelectorKeyEvent = (e: KeyboardEvent) => {
+    // console.log("e.key", e.key);
+    if (e.key === "ArrowRight") {
         incrementColunmSelector();
-    } else if (e.key == "ArrowLeft") {
+    } else if (e.key === "ArrowLeft") {
         decrementColunmSelector();
     }
 };
 
+const handlePlaceMoveKeyEvent = (e: KeyboardEvent) => {
+    if (activeColunmSelector.value === null || e.key !== "Enter") {
+        return;
+    }
+
+    placeMove(activeColunmSelector.value);
+};
+
 onMounted(() => {
-    window.addEventListener("keydown", handleKeyUpColumnSelector);
+    window.addEventListener("keydown", handleColumnSelectorKeyEvent);
+    window.addEventListener("keyup", handlePlaceMoveKeyEvent);
 });
 
 onUnmounted(() => {
-    window.removeEventListener("keydown", handleKeyUpColumnSelector);
+    window.removeEventListener("keydown", handleColumnSelectorKeyEvent);
+    window.removeEventListener("keyup", handlePlaceMoveKeyEvent);
 });
 
 const incrementColunmSelector = () => {
+    if (activeColunmSelector.value === null) {
+        activeColunmSelector.value = 0;
+        return;
+    }
     activeColunmSelector.value = (activeColunmSelector.value + 1) % BOARD_SIZE.cols;
 };
 const decrementColunmSelector = () => {
+    if (activeColunmSelector.value === null) {
+        activeColunmSelector.value = 0;
+        return;
+    }
     activeColunmSelector.value = (activeColunmSelector.value - 1 + BOARD_SIZE.cols) % BOARD_SIZE.cols;
+};
+
+const setColunmSelector = (col: number | null) => {
+    activeColunmSelector.value = col;
 };
 
 // create composable for keyboard event
 // create composable for touch swipe event
+// update column selector to its own component that is able to select the activeColunmSelector column by itself
 </script>
 
 <template>
-    <div class="relative z-10 w-full">
+    <div class="relative z-10 w-full" @mouseleave="setColunmSelector(null)">
         <div class="relative mx-auto w-fit">
             <picture class="absolute inset-0 -z-10 block w-full select-none">
                 <source media="(width < 640px)" srcset="@/assets/images/board-layer-black-small.svg" />
-                <img src="@/assets/images/board-layer-black-large.svg" alt="board shadow" />
+                <img src="@/assets/images/board-layer-black-large.svg" width="632" height="594" alt="board shadow" />
             </picture>
             <picture class="block max-w-full select-none" ref="boardRef">
                 <source media="(width < 640px)" srcset="@/assets/images/board-layer-white-small.svg" />
-                <img src="@/assets/images/board-layer-white-large.svg" alt="board" />
+                <img src="@/assets/images/board-layer-white-large.svg" width="632" height="584" alt="board" />
             </picture>
 
             <div class="absolute top-0 left-0 -z-1 h-full w-full overflow-hidden rounded-[40px]">
                 <template v-for="(column, colIndex) in store.board" :key="colIndex">
                     <template v-for="(playerMove, rowIndex) in column" :key="`${colIndex}-${rowIndex}`">
-                        <Marker :playerMove="playerMove" :scale="1" :debug="false" />
+                        <Marker :playerMove="playerMove" :scale="scale" :debug="false" />
                     </template>
                 </template>
             </div>
@@ -64,9 +88,10 @@ const decrementColunmSelector = () => {
                 <template v-for="(column, colIndex) in store.board" :key="colIndex">
                     <ColumnSelector
                         :column="colIndex"
-                        :scale="1"
-                        :disabled="store.isPlaying || column.length >= BOARD_SIZE.cols || !!store.winner"
+                        :scale="scale"
+                        :disabled="store.isPlaying || column.length >= BOARD_SIZE.rows || !!store.winner"
                         :active="activeColunmSelector === colIndex"
+                        @mouseenter="setColunmSelector(colIndex)"
                     />
                 </template>
             </div>

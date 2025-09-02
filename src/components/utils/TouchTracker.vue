@@ -4,7 +4,7 @@ import { onMounted, onUnmounted, ref } from "vue";
 const touchList = ref<TouchList | null>(null);
 
 const updateTouchList = (e: TouchEvent) => {
-    // e.preventDefault();
+    e.preventDefault();
 
     if (e.type == "touchstart" || e.type == "touchend") {
         console.log("event", e);

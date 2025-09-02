@@ -7,12 +7,12 @@ export interface AddMarkerProps {
 
 <script setup lang="ts">
 import { useGameStore, type Player } from "@/composables/game/gameStore";
-import { computed } from "vue";
 
 interface ColumnSelectorProps {
     column: number;
     disabled: boolean;
     active: boolean;
+    scale: number;
 }
 
 const props = defineProps<ColumnSelectorProps>();
@@ -27,12 +27,12 @@ const handlePlayerMove = () => {
 </script>
 
 <template>
-    <div class="group relative z-10 w-full cursor-pointer" @click="handlePlayerMove">
+    <div class="relative z-10 w-full cursor-pointer" @click="handlePlayerMove">
         <img
             :src="`src/assets/images/marker-${store.turn.player}.png`"
             :class="!disabled ? 'animate-bounce' : 'transform-[translateY(-25%)] opacity-65'"
-            class="absolute -top-10 left-1/2 hidden -translate-x-1/2 ease-in select-none group-hover:block"
-            :style="{ display: active ? 'block' : '' }"
+            class="absolute -top-10 left-1/2 hidden -translate-x-1/2 ease-in select-none"
+            :style="{ display: active ? 'block' : '', scale: scale }"
         />
     </div>
 </template>

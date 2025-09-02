@@ -37,7 +37,6 @@ const tick = () => {
 };
 
 const startTimer = (interval?: number) => {
-    // console.log("start timer");
     const now = new Date().getTime();
     startTime.value = now;
 

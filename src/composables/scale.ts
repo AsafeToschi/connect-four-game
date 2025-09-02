@@ -19,6 +19,7 @@ export const useScale = (boardRef: Ref<HTMLInputElement | null>, baseWidth: numb
     };
 
     onMounted(() => {
+        updateScale();
         window.addEventListener("resize", updateScale);
     });
 

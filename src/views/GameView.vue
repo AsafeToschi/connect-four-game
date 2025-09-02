@@ -22,9 +22,7 @@ import { reactive, ref } from "vue";
             </div>
         </div>
         <!-- board -->
-        <div
-            class="flex min-h-0 shrink-1 grow-0 flex-wrap content-center items-center justify-center gap-x-5 gap-y-12.5 px-5 sm:gap-x-10 sm:gap-y-8 lg:flex-nowrap lg:gap-15"
-        >
+        <div class="flex shrink-1 grow-0 flex-wrap items-center justify-center gap-x-5 gap-y-12.5 px-5 sm:gap-x-10 sm:gap-y-8 lg:flex-nowrap lg:gap-15">
             <PlayerScore player="red" class="order-1 lg:order-none" />
             <Board class="order-3 min-h-0 lg:order-none" />
             <PlayerScore player="yellow" class="order-2 lg:order-none" />

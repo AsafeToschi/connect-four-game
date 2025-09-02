@@ -74,8 +74,10 @@ const updateLineConnection = (currentConnection: Connection, currentPlayer: Play
 };
 
 const isSameLine = (connectionOne: Connection, connectionTwo: Connection) => {
-    const isSameColDirection = connectionOne.direction.colStep == connectionTwo.direction.colStep || connectionOne.direction.colStep - connectionTwo.direction.colStep == 0;
-    const isSameRowDirection = connectionOne.direction.rowStep == connectionTwo.direction.rowStep || connectionOne.direction.rowStep - connectionTwo.direction.rowStep == 0;
+    const isSameColDirection =
+        connectionOne.direction.colStep == connectionTwo.direction.colStep || connectionOne.direction.colStep - connectionTwo.direction.colStep == 0;
+    const isSameRowDirection =
+        connectionOne.direction.rowStep == connectionTwo.direction.rowStep || connectionOne.direction.rowStep - connectionTwo.direction.rowStep == 0;
 
     return isSameColDirection && isSameRowDirection;
 };
@@ -152,10 +154,11 @@ const createPlayerMove = (player: Player, column: number) => {
 
 // handle player move
 export const placeMove = (column: number) => {
-    if (gameStore.value.board[column].length >= BOARD_SIZE.rows) {
-        console.log("this move is not possible");
+    if (gameStore.value.isPlaying || gameStore.value.board[column].length >= BOARD_SIZE.rows || !!gameStore.value.winner) {
+        console.log("this move is not allowed at the moment");
         return;
     }
+
     const player = gameStore.value.turn.player;
     const playerMove = createPlayerMove(player, column);
 
