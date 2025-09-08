@@ -3,9 +3,13 @@ import Marker from "./PlayerMarker.vue";
 import ColumnSelector from "./ColumnSelector.vue";
 import BoardCoordinates from "./BoardCoordinates.vue";
 import { useGameStore, BOARD_SIZE } from "@/composables/game/gameStore";
-import { onMounted, onUnmounted, ref, type MaybeRef } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { useScale } from "@/composables/scale";
 
+interface GameBoardProps {
+    boardContainer: HTMLDivElement;
+}
+const props = defineProps<GameBoardProps>();
 const { store, placeMove } = useGameStore();
 
 const boardRef = ref<HTMLInputElement | null>(null);
@@ -62,18 +66,21 @@ const setColunmSelector = (col: number | null) => {
 // create composable for keyboard event
 // create composable for touch swipe event
 // update column selector to its own component that is able to select the activeColunmSelector column by itself
+
+// Track the height change and calculate the board height with javascript
+// props.boardContainer?.getBoundingClientRect().height;
 </script>
 
 <template>
-    <div class="relative z-10 w-full" @mouseleave="setColunmSelector(null)">
-        <div class="relative mx-auto w-fit">
+    <div class="relative z-10 h-full w-full" @mouseleave="setColunmSelector(null)">
+        <div class="relative mx-auto h-full w-fit">
             <picture class="absolute inset-0 -z-10 block w-full select-none">
                 <source media="(width < 640px)" srcset="@/assets/images/board-layer-black-small.svg" />
                 <img src="@/assets/images/board-layer-black-large.svg" width="632" height="594" alt="board shadow" />
             </picture>
-            <picture class="block max-w-full select-none" ref="boardRef">
+            <picture class="block h-full max-w-full select-none" ref="boardRef">
                 <source media="(width < 640px)" srcset="@/assets/images/board-layer-white-small.svg" />
-                <img src="@/assets/images/board-layer-white-large.svg" width="632" height="584" alt="board" />
+                <img src="@/assets/images/board-layer-white-large.svg" width="632" height="584" alt="board" class="max-h-full w-auto" />
             </picture>
 
             <div class="absolute top-0 left-0 -z-1 h-full w-full overflow-hidden rounded-[40px]">

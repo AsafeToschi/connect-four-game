@@ -68,7 +68,7 @@ const directionMap: { [key: string]: string } = {
             top: `${positionStyle.top}px`,
             left: `${positionStyle.left}px`,
             scale: scale,
-            zIndex: debug == true ? '10' : '',
+            // zIndex: debug == true ? '10' : '',
         }"
         :class="{
             'before:absolute before:top-1/2 before:left-1/2 before:box-border before:h-8.5 before:w-8.5 before:-translate-1/2 before:rounded-full before:border-[6px] before:border-white':

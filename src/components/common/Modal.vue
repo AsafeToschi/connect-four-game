@@ -1,46 +1,63 @@
 <script setup lang="ts">
-import { computed, getCurrentInstance } from "vue";
+import { computed, getCurrentInstance, ref } from "vue";
 
 interface ModalProps {
     bg: "white" | "purple";
-    open?: boolean;
+    isOpen?: boolean;
     overlay?: "transparent" | "dark" | "purple";
 }
 
 const props = withDefaults(defineProps<ModalProps>(), {
-    open: true,
+    isOpen: true,
 });
 
-const emit = defineEmits(["close"]);
+const slots = defineSlots<{
+    default(props: { closeModal: () => void }): any;
+    button(props: { openModal: () => void }): any;
+}>();
 
-const hasCloseListener = computed(() => {
-    const instance = getCurrentInstance();
-    return !!instance?.vnode.props?.onClose;
-});
+const internalIsOpen = ref(false);
+const openModal = () => {
+    internalIsOpen.value = true;
+};
+
+const closeModal = () => {
+    internalIsOpen.value = false;
+};
+
+const showModal = computed(() => (props.isOpen && !slots.button) || internalIsOpen.value);
 </script>
 
 <template>
-    <slot name="button"></slot>
+    <slot name="button" :openModal="openModal"></slot>
     <Teleport to="#modals">
-        <Transition>
-            <div v-if="open" class="fixed inset-0 flex h-svh items-center justify-center p-5">
+        <Transition enter-from-class="opacity-0" leave-to-class="opacity-0">
+            <div
+                v-if="showModal"
+                class="fixed inset-0 z-100 duration-500"
+                :class="{
+                    'bg-black/50': overlay === 'dark',
+                    'bg-purple': overlay === 'purple',
+                }"
+            ></div>
+        </Transition>
+
+        <!-- TODO: create this transition animation in the main.css file to avoid utility class conflicts and make code a bit cleaner -->
+        <Transition
+            enter-from-class="!top-0 -translate-y-full"
+            enter-active-class="ease-modal-in"
+            leave-active-class="ease-modal-out"
+            leave-to-class="top-full translate-y-full"
+        >
+            <div v-show="showModal" class="fixed top-1/2 left-1/2 z-101 w-full max-w-130 -translate-1/2 px-5 duration-500">
                 <div
-                    class="absolute inset-0 -z-1"
-                    :class="{
-                        'bg-black/50': overlay === 'dark',
-                        'bg-purple': overlay === 'purple',
-                        'cursor-pointer': hasCloseListener,
-                    }"
-                    @click="emit('close')"
-                ></div>
-                <div
-                    class="w-full max-w-120 rounded-[40px] border-[3px] px-10 py-12.5 shadow-[0_10px_0_0_#000]"
+                    class="relative max-h-[90svh] rounded-[40px] border-[3px] shadow-[0_10px_0_0_#000]"
                     :class="{
                         'bg-purple': bg === 'purple',
                         'bg-white': bg === 'white',
                     }"
                 >
-                    <slot></slot>
+                    <slot :closeModal="closeModal"></slot>
                 </div>
             </div>
         </Transition>

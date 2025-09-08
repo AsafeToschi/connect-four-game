@@ -60,9 +60,7 @@ const updateLineConnection = (currentConnection: Connection, currentPlayer: Play
 
         if (connectionIndex >= 0) {
             playerMove.connections[connectionIndex] = currentConnection;
-        }
-
-        if (playerMove?.connections?.length == 0) {
+        } else {
             playerMove.connections.push(currentConnection);
         }
 
@@ -75,9 +73,9 @@ const updateLineConnection = (currentConnection: Connection, currentPlayer: Play
 
 const isSameLine = (connectionOne: Connection, connectionTwo: Connection) => {
     const isSameColDirection =
-        connectionOne.direction.colStep == connectionTwo.direction.colStep || connectionOne.direction.colStep - connectionTwo.direction.colStep == 0;
+        connectionOne.direction.colStep === connectionTwo.direction.colStep || connectionOne.direction.colStep + connectionTwo.direction.colStep === 0;
     const isSameRowDirection =
-        connectionOne.direction.rowStep == connectionTwo.direction.rowStep || connectionOne.direction.rowStep - connectionTwo.direction.rowStep == 0;
+        connectionOne.direction.rowStep === connectionTwo.direction.rowStep || connectionOne.direction.rowStep + connectionTwo.direction.rowStep === 0;
 
     return isSameColDirection && isSameRowDirection;
 };
@@ -135,7 +133,6 @@ const setConnections = (currentPlayerMove: PlayerMove) => {
         if (!isSameColDirection || !isSameRowDirection) {
             updateConnectionOrigin(connection, currentPlayerMove);
         } else {
-            currentPlayerMove.connections.push(connection);
             updateLineConnection(connection, currentPlayerMove.player);
         }
     }
@@ -149,6 +146,9 @@ const createPlayerMove = (player: Player, column: number) => {
         connections: [],
     };
 
+    gameStore.value.board[column].push(currentPlayerMove);
+    setConnections(currentPlayerMove);
+
     return currentPlayerMove;
 };
 
@@ -161,9 +161,6 @@ export const placeMove = (column: number) => {
 
     const player = gameStore.value.turn.player;
     const playerMove = createPlayerMove(player, column);
-
-    gameStore.value.board[column].push(playerMove);
-    setConnections(playerMove);
 
     if (playerMove.connections.find((connection) => connection.length >= 4)) {
         endGame(playerMove);

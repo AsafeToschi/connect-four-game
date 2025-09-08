@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import Board from "@/components/Board/GameBoard.vue";
-import Button from "@/components/common/Button.vue";
+import InGameMenu from "@/components/InGameMenu.vue";
 import PlayerScore from "@/components/PlayerScore.vue";
 import Status from "@/components/StatusBar.vue";
+import PageTrack from "@/components/PageTrack.vue";
 import { reactive, ref } from "vue";
+
+const boardContainerRef = ref();
 
 // Hard
 // Simulate the next 3 or 4 moves and get a score for each move, based on that score choose the best one
@@ -12,22 +15,21 @@ import { reactive, ref } from "vue";
 </script>
 
 <template>
-    <main class="relative flex h-svh w-full flex-col items-center justify-center overflow-hidden bg-purple">
+    <main class="relative flex h-svh w-full flex-col items-center justify-center bg-purple">
+        <PageTrack position="top" color="purple" />
+        <PageTrack position="bottom" color="darkPurple" />
         <!-- menu -->
-        <div class="flex w-full grow items-end px-5">
-            <div class="mx-auto flex w-full max-w-[632px] items-center justify-between py-7.5 lg:py-12.5">
-                <Button type="inGameMenu" color="darkPurple" class="inline-block">Menu</Button>
-                <img src="/src//assets/images/logo.svg" class="inline-block" />
-                <Button type="inGameMenu" color="darkPurple" class="inline-block">Restart</Button>
-            </div>
-        </div>
+        <InGameMenu />
         <!-- board -->
-        <div class="flex shrink-1 grow-0 flex-wrap items-center justify-center gap-x-5 gap-y-12.5 px-5 sm:gap-x-10 sm:gap-y-8 lg:flex-nowrap lg:gap-15">
+        <div
+            class="flex min-h-0 shrink-1 grow-0 flex-wrap items-center justify-center gap-x-5 gap-y-12.5 px-5 sm:gap-x-10 sm:gap-y-8 lg:flex-row lg:flex-nowrap lg:gap-15"
+            ref="boardContainerRef"
+        >
             <PlayerScore player="red" class="order-1 lg:order-none" />
-            <Board class="order-3 min-h-0 lg:order-none" />
+            <Board class="order-3 shrink basis-full self-stretch lg:order-none" :boardContainer="boardContainerRef" />
             <PlayerScore player="yellow" class="order-2 lg:order-none" />
         </div>
         <!-- status -->
-        <Status class="shrink-1 grow" />
+        <Status class="shrink grow" />
     </main>
 </template>
