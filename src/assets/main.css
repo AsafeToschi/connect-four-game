@@ -73,3 +73,14 @@
         font-size: 16px;
     }
 }
+
+.container-test {
+    container-type: inline-size;
+    container-name: test;
+}
+
+@container test (inline-size >= 0) {
+    .container-test img {
+        height: 100cqb !important;
+    }
+}

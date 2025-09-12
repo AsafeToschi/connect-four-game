@@ -10,7 +10,7 @@ const { store } = useGameStore();
 
 <template>
     <div
-        class="group relative flex w-auto max-w-[267px] shrink grow flex-col items-center justify-center gap-0 rounded-[20px] border-[3px] bg-white px-0 py-2.5 text-center hard-shadow-2.5 sm:flex-row sm:gap-10 sm:py-3.5 lg:block lg:px-6.5 lg:pt-11.5 lg:pb-4.5"
+        class="group relative flex max-w-[267px] shrink grow flex-col items-center justify-center gap-0 rounded-[20px] border-[3px] bg-white px-0 py-2.5 text-center hard-shadow-2.5 sm:flex-row sm:gap-10 sm:py-3.5 lg:block lg:px-6.5 lg:pt-11.5 lg:pb-4.5"
     >
         <img
             :src="`src/assets/images/player-${player == 'red' ? 'one' : 'two'}.svg`"

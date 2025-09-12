@@ -72,7 +72,7 @@ const setColunmSelector = (col: number | null) => {
 </script>
 
 <template>
-    <div class="relative z-10 h-full w-full" @mouseleave="setColunmSelector(null)">
+    <div class="relative z-10 flex items-center justify-center lg:h-full" @mouseleave="setColunmSelector(null)">
         <div class="relative mx-auto h-full w-fit">
             <picture class="absolute inset-0 -z-10 block w-full select-none">
                 <source media="(width < 640px)" srcset="@/assets/images/board-layer-black-small.svg" />

@@ -15,18 +15,18 @@ const boardContainerRef = ref();
 </script>
 
 <template>
-    <main class="relative flex h-svh w-full flex-col items-center justify-center bg-purple">
+    <main class="flex h-svh w-full flex-col items-center justify-center bg-purple">
         <PageTrack position="top" color="purple" />
         <PageTrack position="bottom" color="darkPurple" />
         <!-- menu -->
         <InGameMenu />
         <!-- board -->
         <div
-            class="flex min-h-0 shrink-1 grow-0 flex-wrap items-center justify-center gap-x-5 gap-y-12.5 px-5 sm:gap-x-10 sm:gap-y-8 lg:flex-row lg:flex-nowrap lg:gap-15"
+            class="flex min-h-0 shrink flex-wrap items-center justify-center gap-x-5 gap-y-12.5 px-5 sm:gap-x-10 sm:gap-y-8 lg:flex-row lg:flex-nowrap lg:gap-15"
             ref="boardContainerRef"
         >
             <PlayerScore player="red" class="order-1 lg:order-none" />
-            <Board class="order-3 shrink basis-full self-stretch lg:order-none" :boardContainer="boardContainerRef" />
+            <Board class="order-3 min-h-0 shrink grow basis-full lg:order-none" :boardContainer="boardContainerRef" />
             <PlayerScore player="yellow" class="order-2 lg:order-none" />
         </div>
         <!-- status -->

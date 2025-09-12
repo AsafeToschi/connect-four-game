@@ -54,8 +54,8 @@ const getInitialGameState = (): GameStore => ({
     starterPlayer: "red",
     isPlaying: false,
     score: {
-        red: 999,
-        yellow: 999,
+        red: 0,
+        yellow: 0,
     },
     board: getInitialBoardState(),
     winner: null,
