@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Board from "@/components/Board/GameBoard.vue";
+import GameBoard from "@/components/Board/GameBoard.vue";
 import InGameMenu from "@/components/InGameMenu.vue";
 import PlayerScore from "@/components/PlayerScore.vue";
 import Status from "@/components/StatusBar.vue";
@@ -25,10 +25,21 @@ const boardContainerRef = ref();
             class="flex min-h-0 shrink flex-wrap items-center justify-center gap-x-5 gap-y-12.5 px-5 sm:gap-x-10 sm:gap-y-8 lg:flex-row lg:flex-nowrap lg:gap-15"
             ref="boardContainerRef"
         >
-            <PlayerScore player="red" class="order-1 lg:order-none" />
-            <Board class="order-3 min-h-0 shrink grow basis-full lg:order-none" :boardContainer="boardContainerRef" />
-            <PlayerScore player="yellow" class="order-2 lg:order-none" />
+            <div class="flex gap-5 lg:contents w-full justify-center">
+                <PlayerScore player="red" />
+                <PlayerScore player="yellow" class="lg:order-last" />
+            </div>
+            <GameBoard class="aspect-1/1 max-h-3/4" :boardContainer="boardContainerRef" />
         </div>
+
+        <!-- <div
+            class="flex min-h-0 shrink flex-wrap items-center justify-center gap-x-5 gap-y-12.5 px-5 sm:gap-x-10 sm:gap-y-8 lg:flex-row lg:flex-nowrap lg:gap-15"
+            ref="boardContainerRef"
+        >
+            <PlayerScore player="red" class="order-1 lg:order-none" />
+            <GameBoard class="order-3 min-h-0 shrink grow basis-full lg:order-none" :boardContainer="boardContainerRef" />
+            <PlayerScore player="yellow" class="order-2 lg:order-none" />
+        </div> -->
         <!-- status -->
         <Status class="shrink grow" />
     </main>
