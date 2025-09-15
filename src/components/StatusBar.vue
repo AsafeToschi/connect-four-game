@@ -80,7 +80,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div class="relative -top-2.5 bottom-0 -mb-2.5 min-h-50 w-full sm:-top-10 sm:-mb-10">
+    <div class="relative -top-2.5 -mb-2.5 min-h-50 w-full sm:-top-10 sm:-mb-10">
         <div
             class="absolute top-0 left-0 z-0 h-full w-full rounded-t-[60px] bg-dark-purple"
             :class="{

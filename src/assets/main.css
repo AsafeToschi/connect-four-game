@@ -47,6 +47,10 @@
     --ease-modal-out: cubic-bezier(0.8, -0.3, 0.55, 0.35);
 }
 
+/* * {
+    outline: 1px solid red;
+} */
+
 /* Example of custom property */
 @property --hard-shadow-color {
     syntax: "<color>";
