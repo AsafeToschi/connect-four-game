@@ -9,37 +9,29 @@ interface MarkerProps {
 }
 
 const props = defineProps<MarkerProps>();
-const positionStyle = ref({ top: -80, left: 0 });
 
 // TODO: Apply gravity effect with javascript
-const shouldAnimate = ref(true);
-
-const calculatePosition = () => {
-    const baseMarkerSize = 70;
-    const boardMargin = 17;
-    const markerGap = 18;
-    positionStyle.value.top = (boardMargin + (baseMarkerSize + markerGap) * (5 - props.playerMove.position.row)) * props.scale;
-    positionStyle.value.left = (boardMargin + (baseMarkerSize + markerGap) * props.playerMove.position.col) * props.scale;
-};
-
+const shouldAnimate = ref(false);
+const delayedRowPosition = ref(6);
 const timeoutId = ref<number | null>(null);
 watch(
     () => props.scale,
     () => {
-        // console.log("scale changed");
         if (timeoutId.value) {
             clearTimeout(timeoutId.value);
         }
 
         shouldAnimate.value = false;
-        calculatePosition();
-        timeoutId.value = setTimeout(() => (shouldAnimate.value = true), 200);
+        timeoutId.value = setTimeout(() => {
+            shouldAnimate.value = true;
+        }, 200);
     }
 );
 
 onMounted(() => {
     setTimeout(() => {
-        calculatePosition();
+        shouldAnimate.value = true;
+        delayedRowPosition.value = props.playerMove.position.row;
     }, 100);
 });
 
@@ -63,20 +55,19 @@ const directionMap: { [key: string]: string } = {
 
 <template>
     <div
-        class="absolute origin-top-left select-none"
+        class="marker absolute origin-top-left select-none"
         :style="{
-            top: `${positionStyle.top}px`,
-            left: `${positionStyle.left}px`,
+            top: `calc((var(--board-margin) + (var(--base-marker-height) + var(--marker-gap)) * (5 - ${delayedRowPosition})) * ${scale})`,
+            left: `calc((var(--board-margin) + (var(--base-marker-width) + var(--marker-gap)) * ${playerMove.position.col}) * ${scale})`,
             scale: scale,
-            // zIndex: debug == true ? '10' : '',
         }"
         :class="{
-            'before:absolute before:top-1/2 before:left-1/2 before:box-border before:h-8.5 before:w-8.5 before:-translate-1/2 before:rounded-full before:border-[6px] before:border-white':
+            'before:absolute before:top-1/2 before:left-1/2 before:box-border before:size-5 before:-translate-1/2 before:rounded-full before:border-[6px] before:border-white sm:before:size-8.5':
                 isWinningMove,
             'transition-[top] duration-500 ease-in-out': shouldAnimate,
         }"
     >
-        <picture>
+        <picture class="pointer-events-none">
             <source media="(width < 640px)" :srcset="`src/assets/images/counter-${playerMove.player}-small.svg`" />
             <img
                 :src="`src/assets/images/counter-${playerMove.player}-large.svg`"
@@ -98,3 +89,21 @@ const directionMap: { [key: string]: string } = {
         </div>
     </div>
 </template>
+
+<style>
+.marker {
+    --base-marker-height: 40px;
+    --base-marker-width: 40px;
+    --board-margin: 6.5px;
+    --marker-gap: 6.72px;
+}
+
+@media (width > 40rem) {
+    .marker {
+        --base-marker-height: 70px;
+        --base-marker-width: 70px;
+        --board-margin: 17px;
+        --marker-gap: 18px;
+    }
+}
+</style>

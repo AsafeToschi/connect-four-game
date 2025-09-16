@@ -1,24 +1,34 @@
-import { onMounted, onUnmounted, ref, type Ref } from "vue";
+import { onMounted, onUnmounted, ref, toValue, type MaybeRef, type Ref } from "vue";
 
-export const useScale = (boardRef: Ref<HTMLInputElement | null>, baseWidth: number) => {
+export const useImageScale = (imageRef: Ref<HTMLImageElement | null>, baseWidth: number) => {
     const scale = ref(1);
 
+    console.log(imageRef.value);
+
     const updateScale = () => {
-        if (!boardRef.value) {
+        console.log("image log", imageRef.value);
+        console.dir(imageRef.value);
+
+        if (!imageRef.value) {
             return;
         }
 
-        const currentWidth = boardRef.value.clientWidth;
-        const newScale = currentWidth / baseWidth;
+        console.dir(imageRef.value.getBoundingClientRect());
+        console.log("imageRef.value.clientWidth", imageRef.value.clientWidth);
+        console.log("imageRef.value.naturalWidth", imageRef.value.naturalWidth);
+        const newScale = imageRef.value.clientWidth / imageRef.value.naturalWidth;
 
+        console.log("newScale", newScale);
         if (newScale === scale.value) {
             return;
         }
-        scale.value = newScale;
-        console.log("new scale: ", scale.value);
+
+        scale.value = !newScale ? 1 : newScale;
+        console.log("scale: ", scale.value);
     };
 
     onMounted(() => {
+        console.log("mounted");
         updateScale();
         window.addEventListener("resize", updateScale);
     });

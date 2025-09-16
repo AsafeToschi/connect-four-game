@@ -10,10 +10,10 @@ const { store } = useGameStore();
 
 <template>
     <div
-        class="max-w-[267px] shrink grow"
+        class="max-w-45 shrink grow sm:max-w-[267px] lg:px-0"
         :class="{
-            'pl-6.5 lg:pl-0': player === 'red',
-            'pr-6.5 lg:pr-0': player === 'yellow',
+            'pl-4 sm:pl-6.5': player === 'red',
+            'pr-4 sm:pr-6.5': player === 'yellow',
         }"
     >
         <div

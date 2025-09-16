@@ -36,7 +36,7 @@ const showModal = computed(() => (props.isOpen && !slots.button) || internalIsOp
                 v-if="showModal"
                 class="fixed inset-0 z-100 duration-500"
                 :class="{
-                    'bg-black/50': overlay === 'dark',
+                    'bg-black/60': overlay === 'dark',
                     'bg-purple': overlay === 'purple',
                 }"
             ></div>
