@@ -109,7 +109,6 @@ export const useGameStore = () => {
 
     return {
         store: readOnlyGameStore,
-        // gameStore, // exposes gameStore until we finish migrating all methods
 
         // exposes methods
         changeTurn,

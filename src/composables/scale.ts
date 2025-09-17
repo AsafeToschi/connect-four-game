@@ -1,40 +1,27 @@
-import { onMounted, onUnmounted, ref, toValue, type MaybeRef, type Ref } from "vue";
+import { onMounted, onUnmounted, ref, type Ref } from "vue";
 
-export const useImageScale = (imageRef: Ref<HTMLImageElement | null>, baseWidth: number) => {
+export const useImageScale = (imageRef: Ref<HTMLImageElement | null>) => {
     const scale = ref(1);
 
-    console.log(imageRef.value);
+    const resizeObserver = new ResizeObserver((entries) => {
+        entries.forEach((entry) => {
+            const imageOriginalWidth = (entry.target as HTMLImageElement).naturalWidth;
+            const newScale = entry.contentRect.width / imageOriginalWidth;
+            if (newScale === scale.value) {
+                return;
+            }
 
-    const updateScale = () => {
-        console.log("image log", imageRef.value);
-        console.dir(imageRef.value);
-
-        if (!imageRef.value) {
-            return;
-        }
-
-        console.dir(imageRef.value.getBoundingClientRect());
-        console.log("imageRef.value.clientWidth", imageRef.value.clientWidth);
-        console.log("imageRef.value.naturalWidth", imageRef.value.naturalWidth);
-        const newScale = imageRef.value.clientWidth / imageRef.value.naturalWidth;
-
-        console.log("newScale", newScale);
-        if (newScale === scale.value) {
-            return;
-        }
-
-        scale.value = !newScale ? 1 : newScale;
-        console.log("scale: ", scale.value);
-    };
-
-    onMounted(() => {
-        console.log("mounted");
-        updateScale();
-        window.addEventListener("resize", updateScale);
+            scale.value = !newScale ? 1 : newScale;
+        });
     });
 
+    onMounted(() => {
+        if (imageRef.value) {
+            resizeObserver.observe(imageRef.value);
+        }
+    });
     onUnmounted(() => {
-        window.removeEventListener("resize", updateScale);
+        resizeObserver.disconnect();
     });
 
     return { scale };

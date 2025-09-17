@@ -2,16 +2,16 @@
 import Marker from "./PlayerMarker.vue";
 import ColumnSelector from "./ColumnSelector.vue";
 import BoardCoordinates from "./BoardCoordinates.vue";
-import { useGameStore, BOARD_SIZE } from "@/composables/game/gameStore";
-import { onMounted, onUnmounted, ref } from "vue";
+import { useGameStore } from "@/composables/game/gameStore";
+import { ref } from "vue";
 import { useImageScale } from "@/composables/scale";
 
 interface GameBoardProps {}
 const props = defineProps<GameBoardProps>();
-const { store, placeMove } = useGameStore();
+const { store } = useGameStore();
 
-const boardRef = ref<HTMLImageElement | null>(null);
-const { scale } = useImageScale(boardRef, 632);
+const boardImageRef = ref<HTMLImageElement | null>(null);
+const { scale } = useImageScale(boardImageRef);
 
 // create composable for keyboard event
 // create composable for touch swipe event
@@ -27,7 +27,7 @@ const { scale } = useImageScale(boardRef, 632);
             </picture>
             <picture class="pointer-events-none block h-full select-none">
                 <source media="(width < 640px)" srcset="@/assets/images/board-layer-white-small.svg" />
-                <img src="@/assets/images/board-layer-white-large.svg" ref="boardRef" width="632" height="584" alt="board" class="max-h-full w-auto" />
+                <img src="@/assets/images/board-layer-white-large.svg" ref="boardImageRef" width="632" height="584" alt="board" class="max-h-full w-auto" />
             </picture>
 
             <div class="absolute top-0 left-0 -z-1 h-full w-full overflow-hidden rounded-[40px]">

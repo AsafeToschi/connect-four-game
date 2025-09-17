@@ -1,10 +1,3 @@
-<script lang="ts">
-export interface AddMarkerProps {
-    player: Player;
-    column: number;
-}
-</script>
-
 <script setup lang="ts">
 import { BOARD_SIZE, useGameStore, type Player } from "@/composables/game/gameStore";
 import { onMounted, onUnmounted, ref } from "vue";
@@ -17,10 +10,10 @@ const props = defineProps<ColumnSelectorProps>();
 const { store, placeMove } = useGameStore();
 
 const handlePlayerMove = () => {
-    if (!activeColunmSelector.value) {
+    if (typeof activeColunmSelector.value !== "number") {
         return;
     }
-    console.log("place");
+
     placeMove(activeColunmSelector.value);
 };
 
@@ -28,6 +21,7 @@ const activeColunmSelector = ref<number | null>(null);
 const setColunmSelector = (col: number | null) => {
     activeColunmSelector.value = col;
 };
+
 const handleColumnSelectorKeyEvent = (e: KeyboardEvent) => {
     if (e.key === "ArrowRight") {
         incrementColunmSelector();
