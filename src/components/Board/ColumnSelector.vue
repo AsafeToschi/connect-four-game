@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { BOARD_SIZE, useGameStore, type Player } from "@/composables/game/gameStore";
+import { useKeyboard } from "@/composables/useKeyboard";
 import { onMounted, onUnmounted, ref } from "vue";
 
 interface ColumnSelectorProps {
@@ -22,32 +23,6 @@ const setColunmSelector = (col: number | null) => {
     activeColunmSelector.value = col;
 };
 
-const handleColumnSelectorKeyEvent = (e: KeyboardEvent) => {
-    if (e.key === "ArrowRight") {
-        incrementColunmSelector();
-    } else if (e.key === "ArrowLeft") {
-        decrementColunmSelector();
-    }
-};
-
-const handlePlaceMoveKeyEvent = (e: KeyboardEvent) => {
-    if (activeColunmSelector.value === null || e.key !== "Enter") {
-        return;
-    }
-
-    placeMove(activeColunmSelector.value);
-};
-
-onMounted(() => {
-    window.addEventListener("keydown", handleColumnSelectorKeyEvent);
-    window.addEventListener("keyup", handlePlaceMoveKeyEvent);
-});
-
-onUnmounted(() => {
-    window.removeEventListener("keydown", handleColumnSelectorKeyEvent);
-    window.removeEventListener("keyup", handlePlaceMoveKeyEvent);
-});
-
 const incrementColunmSelector = () => {
     if (activeColunmSelector.value === null) {
         activeColunmSelector.value = 0;
@@ -55,6 +30,7 @@ const incrementColunmSelector = () => {
     }
     activeColunmSelector.value = (activeColunmSelector.value + 1) % BOARD_SIZE.cols;
 };
+
 const decrementColunmSelector = () => {
     if (activeColunmSelector.value === null) {
         activeColunmSelector.value = 0;
@@ -62,6 +38,10 @@ const decrementColunmSelector = () => {
     }
     activeColunmSelector.value = (activeColunmSelector.value - 1 + BOARD_SIZE.cols) % BOARD_SIZE.cols;
 };
+
+useKeyboard(["ArrowRight"], incrementColunmSelector);
+useKeyboard(["ArrowLeft"], decrementColunmSelector);
+useKeyboard(["Enter", "ArrowDown"], handlePlayerMove);
 
 // TODO: add hold to select column functionality on mobile, it will work better than swipe, place move on touchEnd or on double click
 // TODO: set isPlaying betweens moves
@@ -78,7 +58,7 @@ const decrementColunmSelector = () => {
                             ? 'animate-bounce'
                             : 'transform-[translateY(-25%)] opacity-65'
                     "
-                    class="absolute left-1/2 -mt-[75%] hidden max-w-3/5 -translate-x-1/2 ease-in select-none"
+                    class="absolute left-1/2 hidden max-w-3/5 -translate-x-1/2 -translate-y-full ease-in select-none"
                     :style="{ display: activeColunmSelector === column - 1 ? 'block' : '', scale: scale }"
                 />
             </div>

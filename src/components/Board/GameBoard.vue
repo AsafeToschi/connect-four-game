@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import Marker from "./PlayerMarker.vue";
 import ColumnSelector from "./ColumnSelector.vue";
-import BoardCoordinates from "./BoardCoordinates.vue";
 import { useGameStore } from "@/composables/game/gameStore";
 import { ref } from "vue";
-import { useImageScale } from "@/composables/scale";
+import { useImageScale } from "@/composables/useImageScale";
+import { useKeyboard } from "@/composables/useKeyboard";
 
 interface GameBoardProps {}
 const props = defineProps<GameBoardProps>();
@@ -39,9 +39,6 @@ const { scale } = useImageScale(boardImageRef);
             </div>
 
             <ColumnSelector :scale="scale" />
-
-            <!-- Board Coordinates - Optional -->
-            <!-- <BoardCoordinates /> -->
         </div>
     </div>
 </template>

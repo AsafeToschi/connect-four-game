@@ -7,6 +7,7 @@ const handleRestart = (closeModal: () => void) => {
     restartGame();
     closeModal();
 };
+
 </script>
 
 <template>
@@ -28,7 +29,7 @@ const handleRestart = (closeModal: () => void) => {
                 </template>
             </Modal>
             <img src="/src/assets/images/logo.svg" />
-            <Button type="inGameMenu" color="darkPurple">Restart</Button>
+            <Button type="inGameMenu" color="darkPurple" @click="restartGame()">Restart</Button>
         </div>
     </div>
 </template>

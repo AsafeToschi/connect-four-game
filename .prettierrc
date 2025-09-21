@@ -1,9 +1,0 @@
-{
-    "tabWidth": 4,
-    "trailingComma": "es5",
-    "plugins": ["prettier-plugin-tailwindcss"],
-    "tailwindStylesheet": "./src/assets/main.css",
-    "printWidth": 170,
-    "singleAttributePerLine": false,
-    "tailwindPreserveWhitespace": true
-}
