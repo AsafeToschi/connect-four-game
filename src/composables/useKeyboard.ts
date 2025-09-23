@@ -5,10 +5,11 @@ type EventType = "keydown" | "keyup";
 interface KeyboardListenerOptions {
     eventType: EventType;
     pressAll: boolean;
+    repeatOnHold: boolean;
     // TODO: caseInsensitive: boolean;
 }
 
-type CallbackFunction = (event: KeyboardEvent, keysPressed: Set<KeyboardKey>) => void
+type CallbackFunction = (event: KeyboardEvent, keysPressed: KeyInfo[]) => void
 
 // TODO: handle global state event listeners
 // if we have more than one component using the global state and we remove the event listener onUnmount it will break
@@ -20,52 +21,68 @@ const globalKeyboardState = reactive({
     pressedSimultaneously: new Set<KeyboardKey>()
 });
 
+interface KeyInfo {
+    key: KeyboardKey
+    isBeingHeld: boolean;
+}
+
 export const useKeyboard = (keyList: KeyboardKey[], callback: CallbackFunction, options?: Partial<KeyboardListenerOptions>) => {
     // Handle multiple keys pressed
-    const keysPressedSimultaneously = reactive(new Set<KeyboardKey>());
+    const currentKeysPressed = reactive<KeyInfo[]>([]);
     const addKeyHandler = (event: KeyboardEvent) => {
         const key = event.key as KeyboardKey;
-        if (keysPressedSimultaneously.has(key)) {
+        const keyPresedIndex = currentKeysPressed.findIndex((keyPressed => keyPressed.key === key));
+
+        if (keyPresedIndex !== -1) {
+            currentKeysPressed[keyPresedIndex].isBeingHeld = true;
             return;
         }
-        keysPressedSimultaneously.add(key);
+
+        currentKeysPressed.push({ key, isBeingHeld: false });
     }
-    
+
     const removeKeyHandler = (event: KeyboardEvent) => {
         const key = event.key as KeyboardKey;
-        keysPressedSimultaneously.delete(key);
+        const keyPresedIndex = currentKeysPressed.findIndex((keyPressed => keyPressed.key === key));
+
+        currentKeysPressed.splice(keyPresedIndex, 1);
     }
-    
+
     onMounted(() => {
-        if (!options?.pressAll) {
+        if (!options?.pressAll && !options?.repeatOnHold) {
             return;
         }
         window.addEventListener("keydown", addKeyHandler);
         window.addEventListener("keyup", removeKeyHandler);
     });
-    
+
     onUnmounted(() => {
-        if (!options?.pressAll) {
+        if (!options?.pressAll && !options?.repeatOnHold) {
             return;
         }
         window.removeEventListener("keydown", addKeyHandler);
         window.removeEventListener("keyup", removeKeyHandler);
     });
-    
+
     // Handle callback
     const eventHandler = (event: KeyboardEvent) => {
-        const key = event.key as KeyboardKey;
+        const eventKey = event.key as KeyboardKey;
         if (options?.pressAll) {
-            if (!keyList.every((key) => keysPressedSimultaneously.has(key))) {
+            if (!keyList.every((key) => currentKeysPressed.find(keyPressed => keyPressed.key === key))) {
                 return;
             }
         } else {
-            if (!keyList.includes(key)) {
+            if (!keyList.includes(eventKey)) {
                 return;
             }
         }
 
-        callback(event, keysPressedSimultaneously);
+        const currentKeyPressed = currentKeysPressed.find(keyPressed => keyPressed.key === eventKey)
+        if (options?.repeatOnHold && currentKeyPressed?.isBeingHeld) {
+            return;
+        }
+
+        callback(event, currentKeysPressed);
     };
 
     onMounted(() => {

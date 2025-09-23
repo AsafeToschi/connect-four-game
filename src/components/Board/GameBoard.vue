@@ -4,7 +4,6 @@ import ColumnSelector from "./ColumnSelector.vue";
 import { useGameStore } from "@/composables/game/gameStore";
 import { ref } from "vue";
 import { useImageScale } from "@/composables/useImageScale";
-import { useKeyboard } from "@/composables/useKeyboard";
 
 interface GameBoardProps {}
 const props = defineProps<GameBoardProps>();

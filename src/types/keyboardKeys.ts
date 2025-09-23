@@ -12,8 +12,10 @@ export type NavigationKeys = "ArrowDown" | "ArrowLeft" | "ArrowRight" | "ArrowUp
 
 export type EditingKeys = "Backspace" | "Clear" | "Copy" | "CrSel" | "Cut" | "Delete" | "EraseEof" | "ExSel" | "Insert" | "Paste" | "Redo" | "Undo"
 
+export type UIKeys =  "Accept" | "Again" | "Attn" | "Cancel" | "ContextMenu" | "Escape" | "Execute" | "Find" | "Finish" | "Help" | "Pause" | "Play" | "Props" | "Select" | "ZoomIn" | "ZoomOut"
+
 export type FunctionKeys =  "F1" | "F2" | "F3" | "F4" | "F5" | "F6" | "F7" | "F8" | "F9" | "F10" | "F11" | "F12" | "F13" | "F14" | "F15" | "F16" | "F17" | "F18" | "F19" | "F20" | "Soft1" | "Soft2" | "Soft3" | "Soft4"
 
 
-export type KeyboardKey = NumericKeypadKeys | UpperAlpha | LowerAlpha | ModifierKeys | WhitespaceKeys | NavigationKeys | EditingKeys | FunctionKeys;
+export type KeyboardKey = NumericKeypadKeys | UpperAlpha | LowerAlpha | ModifierKeys | WhitespaceKeys | NavigationKeys | EditingKeys | UIKeys | FunctionKeys;
 export type LowercaseKeyboardKey = Lowercase<KeyboardKey>;
