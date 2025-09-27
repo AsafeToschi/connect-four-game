@@ -8,7 +8,7 @@ interface ModalProps {
 }
 
 const props = withDefaults(defineProps<ModalProps>(), {
-    isOpen: true,
+    isOpen: false,
 });
 
 const slots = defineSlots<{
@@ -25,7 +25,7 @@ const closeModal = () => {
     internalIsOpen.value = false;
 };
 
-const showModal = computed(() => (props.isOpen && !slots.button) || internalIsOpen.value);
+const showModal = computed(() => (props.isOpen) || internalIsOpen.value);
 </script>
 
 <template>
