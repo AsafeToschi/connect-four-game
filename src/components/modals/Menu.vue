@@ -7,7 +7,6 @@ import { useKeyboard } from "@/composables/useKeyboard";
 
 const isMenuOpened = ref(false);
 const toggleModal = () => {
-    console.log("running toggleModal")
     isMenuOpened.value = !isMenuOpened.value
 }
 

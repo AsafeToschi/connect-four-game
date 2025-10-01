@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { PlayerMove } from "@/composables/game/store";
+import { getImageUrl } from "@/utils/getImageUrl";
 import { computed, onMounted, onUpdated, ref, watch, type DeepReadonly } from "vue";
 
 interface MarkerProps {
@@ -51,6 +52,14 @@ const directionMap: { [key: string]: string } = {
     "-10": "←",
     "-11": "↖",
 };
+
+const playerSmallMarkerImg = computed(() => {
+    return getImageUrl(`counter-${props.playerMove.player}-small`, "svg");
+});
+
+const playerMarkerImg = computed(() => {
+    return getImageUrl(`counter-${props.playerMove.player}-large`, "svg");
+});
 </script>
 
 <template>
@@ -68,9 +77,9 @@ const directionMap: { [key: string]: string } = {
         }"
     >
         <picture class="pointer-events-none">
-            <source media="(width < 640px)" :srcset="`src/assets/images/counter-${playerMove.player}-small.svg`" />
+            <source media="(width < 640px)" :srcset="playerSmallMarkerImg" />
             <img
-                :src="`src/assets/images/counter-${playerMove.player}-large.svg`"
+                :src="playerMarkerImg"
                 :alt="`${playerMove.player} marker - Column ${playerMove.position.col + 1}. Row ${playerMove.position.row + 1}`"
             />
         </picture>

@@ -53,7 +53,6 @@ export const useKeyboard = (keyBind: KeyboardKey[], callback: CallbackFunction, 
 
     const currentKeysPressed = reactive<KeyInfo[]>([]);
     const addKeyHandler = (event: KeyboardEvent) => {
-        console.log("keydown");
         const key = event.key as KeyboardKey;
         const keyPresedIndex = currentKeysPressed.findIndex((keyPressed => keyPressed.key === key));
 
@@ -66,7 +65,6 @@ export const useKeyboard = (keyBind: KeyboardKey[], callback: CallbackFunction, 
     }
 
     const removeKeyHandler = (event: KeyboardEvent) => {
-        console.log("keyup");
         const key = event.key as KeyboardKey;
         const keyPresedIndex = currentKeysPressed.findIndex((keyPressed => keyPressed.key === key));
 

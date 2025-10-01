@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { BOARD_SIZE, useGameStore, type Player } from "@/composables/game/store";
 import { useKeyboard } from "@/composables/useKeyboard";
-import { onMounted, onUnmounted, ref } from "vue";
+import { getImageUrl } from "@/utils/getImageUrl";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 
 interface ColumnSelectorProps {
     scale: number;
@@ -45,6 +46,10 @@ useKeyboard(["Enter", "ArrowDown"], handlePlayerMove);
 
 // TODO: add hold to select column functionality on mobile, it will work better than swipe, place move on touchEnd or on double click
 // TODO: set isPlaying betweens moves
+
+const playerSelectionImg = computed(() => {
+    return getImageUrl(`marker-${store.value.turn.player}`, "png");
+})
 </script>
 
 <template>
@@ -52,7 +57,7 @@ useKeyboard(["Enter", "ArrowDown"], handlePlayerMove);
         <template v-for="column in 7" :key="column">
             <div class="relative z-10 w-full cursor-pointer" @click="handlePlayerMove" @mouseenter="setColunmSelector(column - 1)">
                 <img
-                    :src="`src/assets/images/marker-${store.turn.player}.png`"
+                    :src="playerSelectionImg"
                     :class="
                         !store.isPlaying && store.board[column - 1].length < BOARD_SIZE.rows && !store.winner
                             ? 'animate-bounce'

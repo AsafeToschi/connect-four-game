@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useGameStore } from "@/composables/game/store";
-import { onMounted, onUnmounted, ref, watch } from "vue";
+import { getImageUrl } from "@/utils/getImageUrl";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 
 const { store, restartGame, changeTurn } = useGameStore();
 
@@ -77,6 +78,10 @@ onMounted(() => {
 onUnmounted(() => {
     endTimer();
 });
+
+const turnBackgroundImg = computed(() => {
+    return getImageUrl(`turn-background-${store.value.turn.player}`, "svg");
+})
 </script>
 
 <template>
@@ -104,7 +109,7 @@ onUnmounted(() => {
             <!-- Player turn holder -->
 
             <div v-else class="relative" :class="store.turn.player === 'red' && 'text-white'">
-                <img :src="`src/assets/images/turn-background-${store.turn.player}.svg`" class=" " />
+                <img :src="turnBackgroundImg" />
 
                 <div class="absolute top-10 left-0 flex h-[calc(100%-2.5rem)] w-full flex-col items-center justify-center px-4 pt-0 pb-7.5 text-center">
                     <template v-if="store.turn.skipped">

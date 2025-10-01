@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import { useGameStore, type Player } from "@/composables/game/store";
+import { getImageUrl } from "@/utils/getImageUrl";
+import { computed } from "vue";
 
 interface PlayerScoreProps {
     player: Player;
 }
 const props = defineProps<PlayerScoreProps>();
 const { store } = useGameStore();
+
+const playerScoreImg = computed(() => {
+    return getImageUrl(`player-${props.player}`, "svg");
+})
 </script>
 
 <template>
@@ -24,7 +30,7 @@ const { store } = useGameStore();
             }"
         >
             <img
-                :src="`src/assets/images/player-${player === 'red' ? 'one' : 'two'}.svg`"
+                :src="playerScoreImg"
                 alt="player score icon"
                 class="absolute top-1/2 -translate-y-1/2 lg:top-0"
                 :class="{
