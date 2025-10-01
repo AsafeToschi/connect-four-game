@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Marker from "./PlayerMarker.vue";
 import ColumnSelector from "./ColumnSelector.vue";
-import { useGameStore } from "@/composables/game/gameStore";
+import { useGameStore } from "@/composables/game/store";
 import { ref } from "vue";
 import { useImageScale } from "@/composables/useImageScale";
 

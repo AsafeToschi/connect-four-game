@@ -1,5 +1,5 @@
-import { BOARD_SIZE, changeTurn, endGame, useGameStore, type Connection, type MarkerPosition, type Player, type PlayerMove } from "./gameStore";
-import { gameStore } from "./gameStore";
+import { BOARD_SIZE, changeTurn, endGame, useGameStore, type Connection, type MarkerPosition, type Player, type PlayerMove } from "./store";
+import { gameStore } from "./store";
 
 const getPlayerSurroundingMoves = (currentPlayerMove: PlayerMove) => {
     const currentMovePosition = currentPlayerMove.position;

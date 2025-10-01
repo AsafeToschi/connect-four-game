@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PlayerMove } from "@/composables/game/gameStore";
+import type { PlayerMove } from "@/composables/game/store";
 import { computed, onMounted, onUpdated, ref, watch, type DeepReadonly } from "vue";
 
 interface MarkerProps {

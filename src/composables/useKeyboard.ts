@@ -45,7 +45,9 @@ export const useKeyboard = (keyBind: KeyboardKey[], callback: CallbackFunction, 
     // Handle multiple keys pressed
     if (!validateKeyBind(keyBind, options?.pressAll)) {
         // TODO: remove this later, temporary
-        throw new Error("Duplicated keybind");
+        return {
+            globalKeyBinds
+        };
     }
     updateGlobalKeyBind(keyBind, options?.pressAll);
 
@@ -107,7 +109,6 @@ export const useKeyboard = (keyBind: KeyboardKey[], callback: CallbackFunction, 
 
     return {
         // updateKeyBind
-        keyBind,
         globalKeyBinds
     }
 };

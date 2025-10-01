@@ -19,7 +19,6 @@ export const useGlobalEventListener = <Target extends EventTarget, K extends key
             return;
         }
 
-        // console.log("addEventListener: ", uniqueKey)
         target.addEventListener(eventType, globalCallback as EventListener);
         globalListeners.set(uniqueKey, 1);
     });
@@ -35,7 +34,6 @@ export const useGlobalEventListener = <Target extends EventTarget, K extends key
             return
         }
 
-        // console.log("removeEventListener")
         target.removeEventListener(eventType, globalCallback as EventListener);
         globalListeners.delete(uniqueKey);
     });

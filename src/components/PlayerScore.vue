@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useGameStore, type Player } from "@/composables/game/gameStore";
+import { useGameStore, type Player } from "@/composables/game/store";
 
 interface PlayerScoreProps {
     player: Player;

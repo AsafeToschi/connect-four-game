@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { BOARD_SIZE, useGameStore, type Player } from "@/composables/game/gameStore";
+import { BOARD_SIZE, useGameStore, type Player } from "@/composables/game/store";
 import { useKeyboard } from "@/composables/useKeyboard";
 import { onMounted, onUnmounted, ref } from "vue";
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useGameStore } from "@/composables/game/gameStore";
+import { useGameStore } from "@/composables/game/store";
 import { onMounted, onUnmounted, ref, watch } from "vue";
 
 const { store, restartGame, changeTurn } = useGameStore();

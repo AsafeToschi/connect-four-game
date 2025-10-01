@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Button from "@/components/common/Button.vue";
-import { restartGame } from "@/composables/game/gameStore";
+import { restartGame } from "@/composables/game/store";
 import Menu from "./modals/Menu.vue";
 
 </script>

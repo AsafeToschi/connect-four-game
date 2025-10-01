@@ -4,7 +4,6 @@ import InGameMenu from "@/components/InGameMenu.vue";
 import PlayerScore from "@/components/PlayerScore.vue";
 import Status from "@/components/StatusBar.vue";
 import PageTrack from "@/components/PageTrack.vue";
-import { reactive, ref } from "vue";
 
 // Hard
 // Simulate the next 3 or 4 moves and get a score for each move, based on that score choose the best one
