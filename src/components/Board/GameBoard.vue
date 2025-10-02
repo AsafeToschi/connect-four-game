@@ -19,12 +19,12 @@ const { scale } = useImageScale(boardImageRef);
 
 <template>
     <div class="relative z-10 flex h-full max-h-[calc(100%-(93px+50px))] items-center justify-center sm:max-h-[calc(100%-(105px+32px))] lg:max-h-full">
-        <div class="relative mx-auto h-full w-fit">
+        <div class="relative mx-auto h-full">
             <picture class="pointer-events-none absolute inset-0 -z-10 block w-full select-none">
                 <source media="(width < 640px)" srcset="@/assets/images/board-layer-black-small.svg" />
                 <img src="@/assets/images/board-layer-black-large.svg" width="632" height="594" alt="board shadow" />
             </picture>
-            <picture class="pointer-events-none block h-full select-none">
+            <picture class="pointer-events-none block h-full w-fit select-none">
                 <source media="(width < 640px)" srcset="@/assets/images/board-layer-white-small.svg" />
                 <img src="@/assets/images/board-layer-white-large.svg" ref="boardImageRef" width="632" height="584" alt="board" class="max-h-full w-auto" />
             </picture>
